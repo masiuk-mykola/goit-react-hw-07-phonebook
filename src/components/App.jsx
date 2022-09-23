@@ -8,11 +8,11 @@ import {
   useAddContactMutation,
 } from 'redux/contactsSlice';
 import { filterContacts } from 'redux/filterSlice';
+import { Loader } from './Loader/Loader';
 
 export const App = () => {
-  const { data: contacts, isFetching } = useGetContactsQuery();
-  const [addContact] = useAddContactMutation();
-
+  const { data: contacts, isFetching, isLoading } = useGetContactsQuery();
+  const [addContact, { status }] = useAddContactMutation();
   const filterState = useSelector(state => state.filter);
   const dispatch = useDispatch();
 
@@ -42,9 +42,11 @@ export const App = () => {
       <h2>Phonebook</h2>
 
       <ContactForm onSubmit={handleSubmitForm} />
-
+      {status === 'pending' && <Loader />}
       <h2>Contacts</h2>
       <Filter value={filterState} onChange={changeFilter} />
+      <br />
+      {isLoading && <Loader />}
 
       {!isFetching && contacts.length > 0 ? (
         <ContactList contacts={visibleContacts} />
