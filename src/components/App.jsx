@@ -13,7 +13,7 @@ export const App = () => {
   const { data: contacts, isFetching } = useGetContactsQuery();
   const [addContact] = useAddContactMutation();
 
-  const filter = useSelector(state => state.filter);
+  const filterState = useSelector(state => state.filter);
   const dispatch = useDispatch();
 
   const handleSubmitForm = contact => {
@@ -28,7 +28,11 @@ export const App = () => {
     dispatch(filterContacts(e.currentTarget.value));
   };
 
-  const normalFilter = filter.toLowerCase();
+  const normalFilter = filterState.toLowerCase();
+  if (!contacts) {
+    return;
+  }
+
   const visibleContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(normalFilter)
   );
@@ -40,7 +44,7 @@ export const App = () => {
       <ContactForm onSubmit={handleSubmitForm} />
 
       <h2>Contacts</h2>
-      <Filter value={filter} onChange={changeFilter} />
+      <Filter value={filterState} onChange={changeFilter} />
 
       {!isFetching && contacts.length > 0 ? (
         <ContactList contacts={visibleContacts} />
