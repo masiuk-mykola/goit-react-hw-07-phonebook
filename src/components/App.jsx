@@ -1,43 +1,31 @@
-// import { useState, useEffect } from 'react';
 import { ContactForm } from './Form/Form';
 import { ContactList } from './ContactList/ContactList';
 import { Box } from './Box';
 import { Filter } from './Filter/Filter';
-
 import { useSelector, useDispatch } from 'react-redux';
-import { addContact, deleteContact, filterContact } from 'redux/action';
-
-// const LS_KEY = 'contactList';
+import {
+  useGetContactsQuery,
+  useAddContactMutation,
+} from 'redux/contactsSlice';
+import { filterContacts } from 'redux/filterSlice';
 
 export const App = () => {
-  const contacts = useSelector(state => state.contacts);
+  const { data: contacts, isFetching } = useGetContactsQuery();
+  const [addContact] = useAddContactMutation();
+
   const filter = useSelector(state => state.filter);
-
   const dispatch = useDispatch();
-
-  // const [contacts, setContacts] = useState(
-  //   JSON.parse(localStorage.getItem(LS_KEY)) ?? []
-  // );
-  // const [filter, setFilter] = useState('');
-
-  // useEffect(() => {
-  //   localStorage.setItem(LS_KEY, JSON.stringify(contacts));
-  // }, [contacts]);
 
   const handleSubmitForm = contact => {
     contacts.find(
       item => item.name.toLowerCase() === contact.name.toLowerCase()
     )
       ? alert(` ${contact.name} is already in contacts`)
-      : dispatch(addContact(contact));
+      : addContact(contact);
   };
 
   const changeFilter = e => {
-    dispatch(filterContact(e.currentTarget.value));
-  };
-
-  const onDeleteContact = contactID => {
-    dispatch(deleteContact(contactID));
+    dispatch(filterContacts(e.currentTarget.value));
   };
 
   const normalFilter = filter.toLowerCase();
@@ -54,10 +42,10 @@ export const App = () => {
       <h2>Contacts</h2>
       <Filter value={filter} onChange={changeFilter} />
 
-      {contacts.length === 0 ? (
-        <h3>Please, add new contact</h3>
+      {!isFetching && contacts.length > 0 ? (
+        <ContactList contacts={visibleContacts} />
       ) : (
-        <ContactList contacts={visibleContacts} onDeleteBtn={onDeleteContact} />
+        <h3>Please, add new contact</h3>
       )}
     </Box>
   );

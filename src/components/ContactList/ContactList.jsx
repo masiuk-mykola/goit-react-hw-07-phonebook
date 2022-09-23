@@ -1,20 +1,12 @@
 import PropTypes from 'prop-types';
 import { ContactItem } from './ContactItem/ContactItem';
 
-export const ContactList = ({ contacts, onDeleteBtn }) => {
+export const ContactList = ({ contacts }) => {
   return (
     <ul>
       {contacts.map(item => {
-        const { name, id, number } = item;
-        return (
-          <ContactItem
-            id={id}
-            key={id}
-            name={name}
-            number={number}
-            handleDeleteBtn={onDeleteBtn}
-          />
-        );
+        const { name, id, phone } = item;
+        return <ContactItem id={id} key={id} name={name} phone={phone} />;
       })}
     </ul>
   );
@@ -23,10 +15,10 @@ export const ContactList = ({ contacts, onDeleteBtn }) => {
 ContactList.propTypes = {
   contacts: PropTypes.arrayOf(
     PropTypes.exact({
+      createdAt: PropTypes.string.isRequired,
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
+      phone: PropTypes.string.isRequired,
     })
   ).isRequired,
-  onDeleteBtn: PropTypes.func.isRequired,
 };
